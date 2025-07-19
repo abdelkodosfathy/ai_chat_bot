@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SVG Path Area Tool</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background-color: #1e1e1e;
+        color: white;
+        padding: 20px;
+      }
+      #svgContainer {
+        background: black;
+        width: 100%;
+        height: 500px;
+        border: 1px solid #ccc;
+        margin-top: 10px;
+        overflow: auto;
+      }
+      svg path:hover {
+        stroke: yellow;
+        stroke-width: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SVG Path Area Tool</h1>
+    <input type="file" id="svgFileInput" accept=".svg" />
+    <div id="svgContainer"></div>
+    <p id="output"></p>
+
+    <script>
+      const fileInput = document.getElementById("svgFileInput");
+      const svgContainer = document.getElementById("svgContainer");
+      const output = document.getElementById("output");
+
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file && file.type === "image/svg+xml") {
+          const reader = new FileReader();
+          reader.onload = function (evt) {
+            svgContainer.innerHTML = evt.target.result;
+
+            const svg = svgContainer.querySelector("svg");
+            const paths = svg.querySelectorAll("path");
+
+            paths.forEach((path) => {
+              path.style.cursor = "pointer";
+              path.addEventListener("click", (event) => {
+                const d = event.target.getAttribute("d");
+                const subPaths = d.match(/[Mm][^Mm]+/g);
+                console.log(subPaths.join(" "));
+                console.log(subPaths.length);
+                
+                if (!subPaths) {
+                  output.textContent = "No subpaths found.";
+                  return;
+                }
+
+                let maxArea = 0;
+                let largestIndex = -1;
+
+                // Temporary SVG for measurement
+                const tempSVG = document.createElementNS(
+                  "http://www.w3.org/2000/svg",
+                  "svg"
+                );
+                tempSVG.setAttribute("width", "0");
+                tempSVG.setAttribute("height", "0");
+                document.body.appendChild(tempSVG);
+
+                subPaths.forEach((subD, index) => {
+                  const tempPath = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "path"
+                  );
+                  tempPath.setAttribute("d", subD.trim());
+                  tempSVG.appendChild(tempPath);
+
+                  const bbox = tempPath.getBBox();
+                  const area = bbox.width * bbox.height;
+
+                  if (area > maxArea) {
+                    maxArea = area;
+                    largestIndex = index;
+                  }
+
+                  tempSVG.removeChild(tempPath);
+                });
+
+                document.body.removeChild(tempSVG);
+
+                output.textContent = `🧩 Sub-shapes: ${
+                  subPaths.length
+                } — 🔳 Largest shape area: ${maxArea.toFixed(2)} px²`;
+                event.stopPropagation();
+              });
+            });
+          };
+          reader.readAsText(file);
+        } else {
+          alert("Please upload a valid SVG file.");
+        }
+      });
+    </script>
+  </body>
+</html>
