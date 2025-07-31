@@ -90,3 +90,51 @@ export function getData(query: Query, units: Unit[]) {
   
   return results;
 }
+
+
+export async function bookMeeting(data: {
+  name: string;
+  phone: string;
+  areaPreference?: string;
+  pricePreference?: string;
+  paymentType?: string;
+  installmentYears?: number;
+  confirmWithSales: boolean;
+}) {
+  console.log("📅 تم تسجيل حجز المعاد:", data);
+
+  const scriptURL = process.env.GOOGLE_SHEET_URL!;
+  
+  
+  try {
+    const formData = new URLSearchParams();
+    formData.append("name", data.name);
+    formData.append("phone", data.phone);
+    formData.append("areaPreference", data.areaPreference || "");
+    formData.append("pricePreference", data.pricePreference || "");
+    formData.append("paymentType", data.paymentType || "");
+    formData.append(
+      "installmentYears",
+      data.installmentYears?.toString() || ""
+    );
+
+    await fetch(scriptURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formData.toString(),
+    });
+
+    return {
+      success: true,
+      message: `تم حجز معاد مع تيم السيلز باسم ${data.name}. سيتم التواصل معك على ${data.phone}.`,
+    };
+  } catch (error) {
+    console.error("❌ فشل إرسال البيانات إلى Google Sheet", error);
+    return {
+      success: false,
+      message: "حصل خطأ أثناء التسجيل، حاول مرة أخرى.",
+    };
+  }
+}

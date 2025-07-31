@@ -2,7 +2,7 @@ import { OpenAI } from "openai";
 import { NextResponse } from "next/server";
 import { SYSTEM_PROMPT } from "@/lib/constants";
 import { units } from "@/lib/units";
-import { filterUnits, getUnitDetails, bookUnit, getData } from "@/lib/filter";
+import { filterUnits, getUnitDetails, getData, bookMeeting } from "@/lib/filter";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY!,
@@ -50,19 +50,35 @@ export async function POST(req: Request) {
       {
         type: "function",
         function: {
-          name: "bookUnit",
-          description: "حجز وحدة باسم العميل ورقم هاتفه",
+          name: "bookMeeting",
+          description: "حجز معاد مع تيم السيلز و تسجيل بيانات العميل وتفضيلاته",
           parameters: {
             type: "object",
             properties: {
-              name: { type: "string" },
-              phone: { type: "string" },
-              unit_id: { type: "string" },
+              name: { type: "string", description: "اسم العميل" },
+              phone: { type: "string", description: "رقم تليفون العميل" },
+              areaPreference: {
+                type: "string",
+                description: "نطاق المساحة اللي بيدور عليها العميل، مثال: '100-130'",
+              },
+              pricePreference: {
+                type: "string",
+                description: "نطاق السعر للمتر اللي بيفضله العميل، مثال: '10000-15000'",
+              },
+              paymentType: {
+                type: "string",
+                enum: ["cash", "installments"],
+                description: "طريقة الدفع المفضلة: كاش أو تقسيط",
+              },
+              installmentYears: {
+                type: "number",
+                description: "عدد سنوات التقسيط اللي بيفضلها العميل (اختياري)",
+              },
             },
-            required: ["name", "phone", "unit_id"], // كان عندك خطأ هنا: كنت كاتب "area"
+            required: ["name", "phone"],
           },
         },
-      },
+      },      
       {
         type: "function",
         function: {
@@ -99,9 +115,9 @@ export async function POST(req: Request) {
     let result;
     if (name === "getUnitDetails") {
       result = getUnitDetails(args.area, units);
-    } else if (name === "bookUnit") {
-      result = bookUnit(args, units);
-    } else if (name === "getData") {
+    } else if (name === "bookMeeting") {
+      result = bookMeeting(args);
+    }else if (name === "getData") {
       result = getData(args, units);
     }
 

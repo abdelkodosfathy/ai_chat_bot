@@ -1,0 +1,107 @@
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Form with Bootstrap</title>
+      <link
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        rel="stylesheet"
+      />
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
+      <style>
+        .form-container {
+          max-width: 500px;
+          margin: auto;
+          margin-top: 50px;
+          padding: 20px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          background-color: #fff;
+        }
+      </style>
+    </head>
+    <body class="bg-light">
+      <div class="container">
+        <div class="form-container">
+          <h4 class="text-center mb-4">حجز موعد مع فريق السيلز</h4>
+          <form id="submit-to-google-sheet">
+            <div class="form-group">
+              <label>الاسم:</label>
+              <input type="text" class="form-control" name="name" required />
+            </div>
+  
+            <div class="form-group">
+              <label>رقم الهاتف:</label>
+              <input type="text" class="form-control" name="phone" required />
+            </div>
+  
+            <div class="form-group">
+              <label>المساحة المطلوبة (متر):</label>
+              <input type="number" class="form-control" name="preferredArea" />
+            </div>
+  
+            <div class="form-group">
+              <label>الميزانية القصوى (جنيه):</label>
+              <input type="number" class="form-control" name="budget" />
+            </div>
+  
+            <div class="form-group">
+              <label>طريقة الدفع:</label>
+              <select class="form-control" name="paymentMethod" required>
+                <option value="" hidden selected>اختر...</option>
+                <option value="cash">كاش</option>
+                <option value="installments">تقسيط</option>
+              </select>
+            </div>
+  
+            <div class="form-group">
+              <label>عدد سنوات التقسيط (لو اختار تقسيط):</label>
+              <input type="number" class="form-control" name="installmentYears" />
+            </div>
+  
+            <div class="form-group">
+              <label>المشروع المهتم به:</label>
+              <input type="text" class="form-control" name="projectInterest" />
+            </div>
+  
+            <div class="form-group">
+              <label>ملاحظات إضافية:</label>
+              <textarea class="form-control" name="note" rows="3"></textarea>
+            </div>
+  
+            <div class="form-group">
+              <label>ميعاد المقابلة المرغوب:</label>
+              <input type="datetime-local" class="form-control" name="meetingDate" />
+            </div>
+  
+            <button type="submit" class="btn btn-primary btn-block">إرسال البيانات</button>
+          </form>
+        </div>
+      </div>
+  
+      <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxZdpp_ZSiWL3xgOfMpm8A3Wp4RW29Elk2wOeVIrcoHzGo4GrNcsNzFOHFjelk1_YDV/exec';
+        const form = document.getElementById('submit-to-google-sheet');
+  
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const formData = new FormData(form);
+  
+          fetch(scriptURL, {
+            method: "POST",
+            body: formData,
+          })
+            .then(() => {
+              swal("Done", "تم إرسال البيانات بنجاح!", "success");
+              form.reset();
+            })
+            .catch(() => {
+              swal("Error", "حدث خطأ أثناء الإرسال، حاول مرة أخرى", "error");
+            });
+        });
+      </script>
+    </body>
+  </html>  
