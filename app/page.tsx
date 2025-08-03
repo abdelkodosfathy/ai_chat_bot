@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 type Message = {
@@ -19,7 +20,6 @@ export default function Home() {
 
     const userMessage: Message = { role: "user", content: input };
     const updatedMessages: Message[] = [...messages, userMessage];
-
 
     setMessages(updatedMessages);
 
@@ -80,17 +80,19 @@ export default function Home() {
                         typeof rawSrc === "string" && !rawSrc.startsWith("http")
                           ? `/apartments/${rawSrc}`
                           : rawSrc?.toString();
-                    
+
                       return (
-                        <img
+                        <Image
                           {...props}
-                          src={src}
+                          src={src!}
+                          alt="صورة الوحدة"
+                          width={400}
+                          height={300}
                           className="rounded-xl w-full max-w-sm my-2 mx-auto"
                         />
                       );
                     },
-                    
-                    
+
                     pre: () => null,
                     code: ({ node, children }) => (
                       <span className="bg-gray-100 rounded px-1 text-[0.95em] text-gray-800">
