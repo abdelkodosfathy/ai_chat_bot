@@ -4,8 +4,8 @@ export function filterUnits(userInput: string): Unit[] {
   console.log("filterUnits: ", userInput);
   
   
-  let areaMatch = userInput.match(/(\d{2,3}) ?م(تر)?/); // زي "95 متر"
-  let floorMatch = userInput.match(/الدور [^\s]+/); // زي "الدور الأرضي"
+  const areaMatch = userInput.match(/(\d{2,3}) ?م(تر)?/); // زي "95 متر"
+  const floorMatch = userInput.match(/الدور [^\s]+/); // زي "الدور الأرضي"
 
   const area = areaMatch ? parseInt(areaMatch[1]) : null;
   const floor = floorMatch ? floorMatch[0] : null;

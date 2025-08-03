@@ -75,7 +75,7 @@ export default function Home() {
               >
                 <ReactMarkdown
                   components={{
-                    img: ({ node, ...props }) => {
+                    img: ({...props }) => {
                       const rawSrc = props.src;
                       const src =
                         typeof rawSrc === "string" && !rawSrc.startsWith("http")
@@ -94,7 +94,7 @@ export default function Home() {
                       );
                     },
                     pre: () => null,
-                    code: ({ node, children }) => (
+                    code: ({ children }) => (
                       <span className="bg-gray-100 rounded px-1 text-[0.95em] text-gray-800">
                         {children}
                       </span>

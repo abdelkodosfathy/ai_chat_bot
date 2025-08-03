@@ -79,7 +79,6 @@ export async function POST(req: Request) {
           },
         },
       },      
-
       {
         type: "function",
         function: {
@@ -119,7 +118,6 @@ export async function POST(req: Request) {
     } else if (name === "bookMeeting") {
       result = bookMeeting(args);
     }else if (name === "getData") {
-
       result = getData(args, units);
     }
 
