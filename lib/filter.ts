@@ -91,7 +91,6 @@ export function getData(query: Query, units: Unit[]) {
   return results;
 }
 
-
 export async function bookMeeting(data: {
   name: string;
   phone: string;
